@@ -1,0 +1,9 @@
+pandas==2.2.2;
+matplotlib==3.10.8;
+scipy==1.14.1;
+numpy<2.1,>=1.22;
+XGBoost==1.6.1;
+seaborn==0.13.2;
+scikit-learn==1.6;
+tensorflow<2.20,>=2.19;
+flaml==2.5.0;
