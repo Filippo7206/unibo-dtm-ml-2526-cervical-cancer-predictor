@@ -1,0 +1,18 @@
+* text=auto eol=lf
+*.[cC][mM][dD] text eol=crlf
+*.[bB][aA][tT] text eol=crlf
+*.[pP][sS]1 text eol=crlf
+
+# Language markup for GitHub Linguist
+*.ipynb linguist-language=Python
+
+# CSV, TXT — read as text
+*.csv text
+*.tsv text
+*.txt text
+
+# Handle binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
