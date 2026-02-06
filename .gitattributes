@@ -6,12 +6,20 @@
 # Language markup for GitHub Linguist
 *.ipynb linguist-language=Python
 
-# CSV, TXT — read as text
+# Data files, to be treated as text
 *.csv text
 *.tsv text
 *.txt text
+*.json text
 
-# Handle binary files
+# ML Models and Binaries - force binary to prevent corruption
+*.pkl binary
+*.joblib binary
+*.h5 binary
+*.onnx binary
+*.pb binary
+
+# Image and Doc assets
 *.png binary
 *.jpg binary
 *.jpeg binary
