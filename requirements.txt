@@ -4,6 +4,9 @@ scipy==1.14.1;
 numpy<2.1,>=1.22;
 XGBoost==1.6.1;
 seaborn==0.13.2;
+missingno==0.5.2; 
 scikit-learn==1.6;
-tensorflow<2.20,>=2.19;
+tensorflow<2.20,>=2.15;
 flaml==2.5.0;
+scikit-multilearn==0.2.0  
+iterative-stratification  
