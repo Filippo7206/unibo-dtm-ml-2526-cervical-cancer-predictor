@@ -3,10 +3,10 @@ import numpy as np
 from sklearn.impute import SimpleImputer
 import os 
 
-RAW_DATA_PATH = os.path.join(os.getcwd(), 'data', 'raw')
-PROCESSED_DATA_DIR = os.path.join(os.getcwd(), 'data', 'processed')
+RAW_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\raw.csv'
+PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\processed.csv'
 
-def load_and_clean_data(file_name = RAW_DATA_PATH): 
+def load_and_clean_data(file_name = RAW_DATA_PATH):  
     """
     Initial cleaning steps based on EDA findings
     
@@ -61,11 +61,7 @@ if __name__ == "__main__":
     data = impute_missing_values(data)
     print("Missing values have been imputed.")
 
-    #save the cleaned data for modeling 
-    if not os.path.exists(PROCESSED_DATA_DIR):
-        os.makedirs(PROCESSED_DATA_DIR)
     
-    output_path = os.path.join(PROCESSED_DATA_DIR, "processed.csv")
-    data.to_csv(output_path, index=False)
-    print(f"Cleaned data saved to {output_path}")
+    data.to_csv(PROCESSED_DATA_PATH, index=False)
+    print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
 
