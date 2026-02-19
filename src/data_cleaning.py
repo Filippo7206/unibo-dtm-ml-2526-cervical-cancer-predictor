@@ -6,7 +6,7 @@ import os
 RAW_DATA_PATH = os.path.join(os.getcwd(), 'data', 'raw')
 PROCESSED_DATA_DIR = os.path.join(os.getcwd(), 'data', 'processed')
 
-def load_clean_data(file_name = RAW_DATA_PATH): 
+def load_and_clean_data(file_name = RAW_DATA_PATH): 
     """
     Initial cleaning steps based on EDA findings
     
@@ -49,3 +49,23 @@ def impute_missing_values(df):
     return df
 
 if __name__ == "__main__":
+    #executing the whole pipeline with the methods just defined
+    print("Starting data cleaning process...")
+
+    #loading the raw data and performing the initial cleaning steps (removing duplicates, low-value columns, converting "?" to NaN)
+    data = load_and_clean_data()
+    print(f"Duplicates and low-value columns have been removed. The current state of the data is: {data.shape}")
+
+    #next step: imputation of missing values for the columns still having some missing values after the initial cleaning steps.
+    print("Proceeding with imputation of missing values...")
+    data = impute_missing_values(data)
+    print("Missing values have been imputed.")
+
+    #save the cleaned data for modeling 
+    if not os.path.exists(PROCESSED_DATA_DIR):
+        os.makedirs(PROCESSED_DATA_DIR)
+    
+    output_path = os.path.join(PROCESSED_DATA_DIR, "processed.csv")
+    data.to_csv(output_path, index=False)
+    print(f"Cleaned data saved to {output_path}")
+
