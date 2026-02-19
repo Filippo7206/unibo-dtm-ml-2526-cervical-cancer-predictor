@@ -61,6 +61,9 @@ if __name__ == "__main__":
     data = impute_missing_values(data)
     print("Missing values have been imputed.")
 
+    data = data.drop_duplicates()
+    print(f"After imputation, the current state of the data is: {data.shape}")
+
     
     data.to_csv(PROCESSED_DATA_PATH, index=False)
     print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
