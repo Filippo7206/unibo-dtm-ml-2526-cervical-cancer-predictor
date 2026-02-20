@@ -4,7 +4,7 @@ from sklearn.impute import SimpleImputer
 import os 
 
 RAW_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\raw.csv'
-PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\processed.csv'
+PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\processed_data\\cleaned_data.csv'
 
 def load_and_clean_data(file_name = RAW_DATA_PATH):  
     """
