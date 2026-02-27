@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.impute import SimpleImputer
 import os 
 
@@ -17,9 +18,7 @@ def load_and_clean_data(file_name = RAW_DATA_PATH):
     #remove the 23 duplicates found in EDA
     df.drop_duplicates(inplace=True)
 
-    #drop the two columns having too many missing values
-    df.drop(columns=["STDs: Time since first diagnosis","STDs: Time since last diagnosis"], inplace=True)
-
+    
     #conversion of the columns containing NaN values to numeric type
     df = df.apply(pd.to_numeric, errors="coerce").convert_dtypes()
 
