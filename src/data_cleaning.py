@@ -3,7 +3,6 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.impute import SimpleImputer
 from data_cleaning_knn_imputation import feature_scaling
-import os 
 
 RAW_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\raw.csv'
 PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
@@ -48,3 +47,19 @@ def zero_variance_drop(df):
         print("No zero-variance columns detected.")
     
     return df
+
+if __name__ == "__main__":
+    #executing the whole pipeline with the methods just defined
+    print("Starting data cleaning process...")
+
+    #loading the raw data and performing the initial cleaning steps (removing duplicates, low-value columns, converting "?" to NaN)
+    data = load_and_clean_data()
+    print(f"Duplicates and low-value columns have been removed. The current state of the data is: {data.shape}")
+
+    #next step: dropping columns with zero variance
+    print("Proceeding with dropping zero-variance columns...")
+    data = zero_variance_drop(data)
+    print("All zero-variance columns have been dropped.")
+    
+    data.to_csv(PROCESSED_DATA_PATH, index=False)
+    print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
