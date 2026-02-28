@@ -5,7 +5,7 @@ import importlib.machinery
 RAW_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\raw.csv'
 PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
 
-def load_and_clean_data(file_name = RAW_DATA_PATH):  
+def load_and_basic_data_cleaning(file_name = RAW_DATA_PATH):  
     """
     Initial cleaning steps based on EDA findings
     
@@ -19,15 +19,13 @@ def load_and_clean_data(file_name = RAW_DATA_PATH):
     #conversion of the columns containing NaN values to numeric type
     df = df.apply(pd.to_numeric, errors="coerce").convert_dtypes()
 
-    #dropping the two columns with more than 90% of missing values
-    df = df.drop(columns=['STDs: Time since first diagnosis', 'STDs: Time since last diagnosis'])
-
-
     return df
 
 def zero_variance_drop(df):
     """
-    Drop the columns with zero variance, as they do not provide any useful information for the model.
+    Drop the columns with zero variance, 
+    as they do not provide any useful information for the model.
+    Drop cols with too many missing values as well
     """
 
     #calculating the variance of each column and identifying those with zero variance
@@ -41,6 +39,9 @@ def zero_variance_drop(df):
             print(f"Column {col} has been dropped due to zero variance.")
     else:
         print("No zero-variance columns detected.")
+
+    #dropping the two columns with more than 90% of missing values
+    df = df.drop(columns=['STDs: Time since first diagnosis', 'STDs: Time since last diagnosis'], errors='ignore')
     
     return df
 
@@ -83,7 +84,7 @@ def low_variance_aggr(df):
 
     return df
 
-def log_transform(df, cols):
+def log_transform(df):
     """
     Apply log transformation to the columns found in EDA to be right-skewed, 
     in order to reduce skewness and make the data more normally distributed.
@@ -105,14 +106,14 @@ if __name__ == "__main__":
     
     print("Starting data cleaning process...")
 
-    #loading the raw data and performing the initial cleaning steps (removing duplicates, low-value columns, converting "?" to NaN)
-    data = load_and_clean_data()
-    print(f"Duplicates and low-value columns have been removed. The current state of the data is: {data.shape}")
-
-    #next step: dropping columns with zero variance
+    #loading the raw data and performing the initial cleaning steps (removing duplicates, converting "?" to NaN)
+    data = load_and_basic_data_cleaning()
+    print(f"Invalid values have been converted to NaN, data types have been converted to numeric, and duplicates have been removed. The current state of the data is: {data.shape}")
+    
+    #next step: dropping columns with zero variance and cols with too many missing values
     print("Proceeding with dropping zero-variance columns...")
     data = zero_variance_drop(data)
-    print("All zero-variance columns have been dropped.")
+    print("All zero-variance columns and columns with high data missingness have been dropped.")
 
     #next step: dropping features based on high correlation
     print("Proceeding with correlation-based feature dropping...")
@@ -123,5 +124,10 @@ if __name__ == "__main__":
     data = low_variance_aggr(data)
     print("Low-variance features have been aggregated into new columns.")
     
+    #last step: applying log transformation to the right-skewed features
+    print("Proceeding with log transformation of right-skewed features...")
+    data = log_transform(data)
+    print("Log transformation applied to the right-skewed features.")
+
     data.to_csv(PROCESSED_DATA_PATH, index=False)
     print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
