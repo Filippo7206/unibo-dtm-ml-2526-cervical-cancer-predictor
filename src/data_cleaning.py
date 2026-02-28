@@ -51,7 +51,7 @@ def zero_variance_drop(df):
 def low_variance_aggr(df, threshold=0.01):
     """
     Aggregate low-variance features (all specific forms of STDs, as EDA unveiled)
-    into two new columns: "viral_stds_group" and "bact_stds_group")
+    into two new columns: "STDs: Viral group" and "STDs: Bacterial group")
     """
 
     #identifying low-variance columns based on the specified threshold
@@ -62,8 +62,8 @@ def low_variance_aggr(df, threshold=0.01):
     bact_inf_group = ['STDs:pelvic inflammatory disease', 'STDs:molluscum contagiosum', 'STDs:vaginal condylomatosis']
     
     #creating the new aggregated columns by summing the values of the specific STD columns
-    df['viral_stds_group'] = df[viral_group].sum(axis=1)
-    df['bact_stds_group'] = df[bact_inf_group].sum(axis=1)
+    df['STDs: Viral group'] = df[viral_group].sum(axis=1)
+    df['STDs: Bacterial group'] = df[bact_inf_group].sum(axis=1)
 
     #dropping the original specific STD columns after aggregation
     df = df.drop(columns=viral_group + bact_inf_group)
