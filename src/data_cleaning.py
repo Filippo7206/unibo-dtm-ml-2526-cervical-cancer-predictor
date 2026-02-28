@@ -32,14 +32,8 @@ def zero_variance_drop(df):
     Drop the columns with zero variance, as they do not provide any useful information for the model.
     """
 
-    #scaling features before calculating the variance    
-    scaled_data, scaler = feature_scaling(df)
-
-    scaled_df = df.copy()
-    scaled_df[scaled_data.columns] = scaled_data
-
-    #calculating the variance of each feature and identifying those with zero variance
-    variances = scaled_data.var()
+    #calculating the variance of each column and identifying those with zero variance
+    variances = df.var()
     zero_var_cols = variances[variances == 0].index.tolist()
 
     #dropping the zero-variance columns and printing their names
