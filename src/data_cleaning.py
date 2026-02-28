@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import importlib.machinery
 
 RAW_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\raw.csv'
 PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
@@ -73,6 +74,10 @@ def low_variance_aggr(df):
     df['STDs: Viral group'] = df[viral_group].sum(axis=1)
     df['STDs: Bacterial group'] = df[bact_inf_group].sum(axis=1)
 
+    #moving the two new columns to more logical positions in the dataset
+    df.insert(9, 'STDs: Viral group', df.pop('STDs: Viral group'))  
+    df.insert(10, 'STDs: Bacterial group', df.pop('STDs: Bacterial group'))  
+
     #dropping the original specific STD columns after aggregation
     df = df.drop(columns=viral_group + bact_inf_group)
 
@@ -80,7 +85,10 @@ def low_variance_aggr(df):
 
 
 if __name__ == "__main__":
-    #executing the whole pipeline with the methods just defined
+    """
+    Executing the whole pipeline with the methods just defined
+    """
+    
     print("Starting data cleaning process...")
 
     #loading the raw data and performing the initial cleaning steps (removing duplicates, low-value columns, converting "?" to NaN)
