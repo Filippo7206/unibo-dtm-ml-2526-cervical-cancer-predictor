@@ -51,10 +51,7 @@ def low_variance_aggr(df, threshold=0.01):
     Aggregate low-variance features (all specific forms of STDs, as EDA unveiled)
     into two new columns: "STDs: Viral group" and "STDs: Bacterial group")
     """
-
-    #identifying low-variance columns based on the specified threshold
-    df = zero_variance_drop(df)
-
+    
     #lists of specific STDs to be aggregated into the two new columns, based on their nature (viral or bacterial)
     viral_group = ['STDs:genital herpes', 'STDs:Hepatitis B', 'STDs:HPV']
     bact_inf_group = ['STDs:pelvic inflammatory disease', 'STDs:molluscum contagiosum', 'STDs:vaginal condylomatosis']
