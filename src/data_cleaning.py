@@ -1,8 +1,5 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.impute import SimpleImputer
-from data_cleaning_knn_imputation import feature_scaling
 
 RAW_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\raw.csv'
 PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
@@ -46,15 +43,31 @@ def zero_variance_drop(df):
     
     return df
 
-def low_variance_aggr(df, threshold=0.01):
+def corr_based_drop(df):
+    """
+    Drop features based on high correlation, as identified in EDA.
+    """
+
+    #dropping features with high correlation (corr >0.80) with other features, as identified in EDA
+    high_corr_cols = ["STDs", "STDs:vulvo-perineal condylomatosis", "STDs: Number of diagnosis", "Dx:HPV"]
+    df = df.drop(columns=high_corr_cols, errors='ignore')
+
+    #dropping other columns, characterized by less correlation (0.7 < corr < 0.80)
+    #but still providing redundant information, as identified in EDA
+    redundant_cols= ["Smokes", "Hormonal Contraceptives", "IUD"]
+    df = df.drop(columns=redundant_cols, errors='ignore')
+
+    return df 
+
+def low_variance_aggr(df):
     """
     Aggregate low-variance features (all specific forms of STDs, as EDA unveiled)
     into two new columns: "STDs: Viral group" and "STDs: Bacterial group")
     """
 
     #lists of specific STDs to be aggregated into the two new columns, based on their nature (viral or bacterial)
-    viral_group = ['STDs:genital herpes', 'STDs:Hepatitis B', 'STDs:HPV']
-    bact_inf_group = ['STDs:pelvic inflammatory disease', 'STDs:molluscum contagiosum', 'STDs:vaginal condylomatosis']
+    viral_group = [col for col in ['STDs:genital herpes', 'STDs:Hepatitis B', 'STDs:HPV'] if col in df.columns]
+    bact_inf_group = [col for col in ['STDs:pelvic inflammatory disease', 'STDs:molluscum contagiosum', 'STDs:vaginal condylomatosis'] if col in df.columns]
     
     #creating the new aggregated columns by summing the values of the specific STD columns
     df['STDs: Viral group'] = df[viral_group].sum(axis=1)
@@ -64,22 +77,6 @@ def low_variance_aggr(df, threshold=0.01):
     df = df.drop(columns=viral_group + bact_inf_group)
 
     return df
-
-def corr_based_drop(df):
-    """
-    Drop features based on high correlation, as identified in EDA.
-    """
-
-    #dropping features with high correlation (corr >0.80) with other features, as identified in EDA
-    high_corr_cols = ["STDs", "STDs:vulvo-perineal condylomatosis", "STDs: Number of diagnosis", "Dx:HPV"]
-    df = df.drop(columns=high_corr_cols)
-
-    #dropping other columns, characterized by less correlation (0.7 < corr < 0.80)
-    #but still providing redundant information, as identified in EDA
-    redundant_cols= ["Smokes", "Hormonal Contraceptives", "IUD"]
-    df = df.drop(columns=redundant_cols)
-
-    return df 
 
 
 if __name__ == "__main__":
