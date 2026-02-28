@@ -48,6 +48,29 @@ def zero_variance_drop(df):
     
     return df
 
+def low_variance_aggr(df, threshold=0.01):
+    """
+    Aggregate low-variance features (all specific forms of STDs, as EDA unveiled)
+    into two new columns: "viral_stds_group" and "bact_stds_group")
+    """
+
+    #identifying low-variance columns based on the specified threshold
+    df = zero_variance_drop(df)
+
+    #lists of specific STDs to be aggregated into the two new columns, based on their nature (viral or bacterial)
+    viral_group = ['STDs:genital herpes', 'STDs:Hepatitis B', 'STDs:HPV']
+    bact_inf_group = ['STDs:pelvic inflammatory disease', 'STDs:molluscum contagiosum', 'STDs:vaginal condylomatosis']
+    
+    #creating the new aggregated columns by summing the values of the specific STD columns
+    df['viral_stds_group'] = df[viral_group].sum(axis=1)
+    df['bact_stds_group'] = df[bact_inf_group].sum(axis=1)
+
+    #dropping the original specific STD columns after aggregation
+    df = df.drop(columns=viral_group + bact_inf_group)
+
+    return df
+
+
 if __name__ == "__main__":
     #executing the whole pipeline with the methods just defined
     print("Starting data cleaning process...")
@@ -60,6 +83,11 @@ if __name__ == "__main__":
     print("Proceeding with dropping zero-variance columns...")
     data = zero_variance_drop(data)
     print("All zero-variance columns have been dropped.")
+
+    #next step: aggregating low-variance features into two new columns
+    print("Proceeding with low-variance feature aggregation...")    
+    data = low_variance_aggr(data)
+    print("Low-variance features have been aggregated into new columns.")
     
     data.to_csv(PROCESSED_DATA_PATH, index=False)
     print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
