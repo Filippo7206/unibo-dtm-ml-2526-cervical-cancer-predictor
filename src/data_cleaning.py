@@ -51,7 +51,7 @@ def low_variance_aggr(df, threshold=0.01):
     Aggregate low-variance features (all specific forms of STDs, as EDA unveiled)
     into two new columns: "STDs: Viral group" and "STDs: Bacterial group")
     """
-    
+
     #lists of specific STDs to be aggregated into the two new columns, based on their nature (viral or bacterial)
     viral_group = ['STDs:genital herpes', 'STDs:Hepatitis B', 'STDs:HPV']
     bact_inf_group = ['STDs:pelvic inflammatory disease', 'STDs:molluscum contagiosum', 'STDs:vaginal condylomatosis']
@@ -71,7 +71,7 @@ def corr_based_drop(df):
     """
 
     #dropping features with high correlation (corr >0.80) with other features, as identified in EDA
-    high_corr_cols = ["STDs", "STDs: vulvo-perineal condylomatosis", "STDs: number of diagnosis", "Dx:HPV"]
+    high_corr_cols = ["STDs", "STDs:vulvo-perineal condylomatosis", "STDs: Number of diagnosis", "Dx:HPV"]
     df = df.drop(columns=high_corr_cols)
 
     #dropping other columns, characterized by less correlation (0.7 < corr < 0.80)
