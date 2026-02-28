@@ -83,6 +83,20 @@ def low_variance_aggr(df):
 
     return df
 
+def log_transform(df, cols):
+    """
+    Apply log transformation to the columns found in EDA to be right-skewed, 
+    in order to reduce skewness and make the data more normally distributed.
+    """
+
+    cols_to_transform = ["Number of sexual partners", "Smokes (years)", 
+                         "Smokes (packs/year)", "Hormonal Contraceptives (years)", "IUD (years)"]
+    
+    for col in cols_to_transform: 
+        if col in df.columns:
+            #using log1p to handle zero values in the columns, and very small numbers
+            df[col] = np.log1p(df[col]) 
+    return df 
 
 if __name__ == "__main__":
     """
