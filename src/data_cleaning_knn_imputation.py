@@ -1,13 +1,11 @@
 import pandas as pd
 import numpy as np
-from sklearn.impute import SimpleImputer
-import os 
-from data_cleaning_median_imputation import load_and_clean_data
-from sklearn.impute import KNNImputer
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.impute import KNNImputer
 
-RAW_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\raw.csv'
-PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\processed_data\\cleaned_data_knn_imputation.csv'
+
+BASIC_CLEANED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
+PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\data_after_imputation\\cleaned_data_knn_imputation.csv'
 
 def feature_scaling(df): 
     """
@@ -58,19 +56,15 @@ def KNN_imputation(df,scaler, n_neighbors=29):
     return df
 
 if __name__ == "__main__":
-    
     #executing the whole pipeline with the methods just defined
-    print("Starting data cleaning process...")
+    print("Starting KNN imputation process...")
 
-    #loading the raw data and performing the initial cleaning steps (removing duplicates, low-value columns, converting "?" to NaN)
-    data = load_and_clean_data()
-    print(f"Duplicates and low-value columns have been removed. The current state of the data is: {data.shape}")
+    data = pd.read_csv(BASIC_CLEANED_DATA_PATH)
 
     #scaling the features before KNN imputation
     scaled_data, scaler = feature_scaling(data)
 
     #KNN imputation of the missing values 
-    print("Proceeding with KNN imputation of missing values...")
     imputed_data = KNN_imputation(scaled_data,scaler)
     print("Missing values have been imputed.")
 
