@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.impute import SimpleImputer
 
 BASIC_CLEANED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
-PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\data_after_imputation\\cleaned_data_median_imputation.csv'
+PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\data_after_imputation\\median_and_freq_imputed.csv'
 
 
 # Setting up the imputation strategy for the missing values in the dataset.

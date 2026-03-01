@@ -5,7 +5,7 @@ from sklearn.impute import KNNImputer
 
 
 BASIC_CLEANED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
-PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\data_after_imputation\\cleaned_data_knn_imputation.csv'
+PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\data_after_imputation\\knn_imputed.csv'
 
 def feature_scaling(df): 
     """
