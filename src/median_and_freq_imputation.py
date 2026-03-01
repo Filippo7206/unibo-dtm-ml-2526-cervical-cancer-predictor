@@ -1,10 +1,14 @@
 import pandas as pd
 import numpy as np
 from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.ensemble import IsolationForest
+from knn_imputation import feature_scaling, isolation_forest_anomaly_detection
 
 BASIC_CLEANED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
 PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\data_after_imputation\\median_and_freq_imputed.csv'
 
+targets = ["Hinselmann", "Schiller", "Citology", "Biopsy"]
 
 # Setting up the imputation strategy for the missing values in the dataset.
 def median_freq_imputing(df):
@@ -19,7 +23,6 @@ def median_freq_imputing(df):
     
     df[int_missing_values] = num_imputer.fit_transform(df[int_missing_values])
     
-    targets = ["Hinselmann", "Schiller", "Citology", "Biopsy"]
     exclude = int_missing_values + ["Age"] + targets #Age column is complete
 
     cat_cols = [col for col in df.columns if col not in exclude]
@@ -35,8 +38,16 @@ if __name__ == "__main__":
 
     data = pd.read_csv(BASIC_CLEANED_DATA_PATH)
     
+    #performing median and frequency imputation of the missing values
     data = median_freq_imputing(data)
     print("Missing values have been imputed.")
+
+    #scaling data before performing anomaly detection
+    data, scaler = feature_scaling(data)  
+
+    #performing anomaly detection on the imputed dataset
+    data = isolation_forest_anomaly_detection(data,scaler)
+    print("Anomaly detection completed.")
 
     data.to_csv(PROCESSED_DATA_PATH, index=False)
     print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
