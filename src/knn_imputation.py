@@ -45,7 +45,8 @@ def KNN_imputing(df,scaler, n_neighbors=29):
     df[features] = scaler.inverse_transform(df[features])
 
     #before rounding the scaled integer values, we need to separate the continuous columns from such discrete ones
-    continuous_cols = ["Smokes (years)", "Smokes (packs/year)", 
+    #especially after log1p transformation, some of the features that were originally discrete may now contain decimal values
+    continuous_cols = ["Number of sexual partners", "Smokes (years)", "Smokes (packs/year)", 
         "Hormonal Contraceptives (years)", "IUD (years)"]
     discrete_cols = [col for col in features if col not in continuous_cols]
 
@@ -67,12 +68,8 @@ if __name__ == "__main__":
     #KNN imputation of the missing values 
     imputed_data = KNN_imputing(scaled_data,scaler)
     print("Missing values have been imputed.")
-
-    final_data = imputed_data.drop_duplicates()
-    print(f"After imputation, the current state of the data is: {final_data.shape}")
-
     
-    final_data.to_csv(PROCESSED_DATA_PATH, index=False)
+    imputed_data.to_csv(PROCESSED_DATA_PATH, index=False)
     print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
 
 

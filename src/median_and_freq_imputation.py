@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.impute import SimpleImputer
 
 BASIC_CLEANED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
@@ -15,13 +14,13 @@ def median_freq_imputing(df):
     """
     num_imputer = SimpleImputer(missing_values=np.nan,strategy="median")
     int_missing_values = ["Number of sexual partners", "First sexual intercourse", "Num of pregnancies", 
-                          "Hormonal Contraceptives (years)", "IUD (years)",
-                          "STDs (number)", "STDs: Number of diagnosis"]
+                          "Smokes (years)","Smokes (packs/year)",
+                          "Hormonal Contraceptives (years)", "IUD (years)","STDs (number)"]
     
     df[int_missing_values] = num_imputer.fit_transform(df[int_missing_values])
     
     targets = ["Hinselmann", "Schiller", "Citology", "Biopsy"]
-    exclude = int_missing_values + ["Age"] + targets
+    exclude = int_missing_values + ["Age"] + targets #Age column is complete
 
     cat_cols = [col for col in df.columns if col not in exclude]
     cat_imputer = SimpleImputer(missing_values=np.nan, strategy="most_frequent")
@@ -38,9 +37,6 @@ if __name__ == "__main__":
     
     data = median_freq_imputing(data)
     print("Missing values have been imputed.")
-
-    data = data.drop_duplicates()
-    print(f"After imputation, the current state of the data is: {data.shape}")
 
     data.to_csv(PROCESSED_DATA_PATH, index=False)
     print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
