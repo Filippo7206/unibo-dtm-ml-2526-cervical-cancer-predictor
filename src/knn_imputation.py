@@ -2,10 +2,13 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.impute import KNNImputer
+from sklearn.ensemble import IsolationForest
 
 
 BASIC_CLEANED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
 PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\data_after_imputation\\knn_imputed.csv'
+
+targets = ["Hinselmann", "Schiller", "Citology", "Biopsy"]    
 
 def feature_scaling(df): 
     """
@@ -13,9 +16,8 @@ def feature_scaling(df):
     so as to avoid the distance calculation 
     being biased by the different scales of the features.
     """
-    targets = ["Hinselmann", "Schiller", "Citology", "Biopsy"]
     features = [col for col in df.columns if col not in targets]
-    
+
     scaler = MinMaxScaler() 
     scaled_data = scaler.fit_transform(df[features])
     scaled_df = df.copy()
@@ -36,7 +38,6 @@ def KNN_imputing(df,scaler, n_neighbors=29):
                          weights="distance")
     
     
-    targets = ["Hinselmann", "Schiller", "Citology", "Biopsy"]
     features = [col for col in df.columns if col not in targets]
 
     df[features] = imputer.fit_transform(df[features])
@@ -56,7 +57,29 @@ def KNN_imputing(df,scaler, n_neighbors=29):
     
     return df
 
+def isolation_forest_anomaly_detection(df,scaler):
+    """
+    Perform anomaly detection using Isolation Forest on the imputed dataset.
+    This method identifies anomalies by isolating observations in the feature space.
+    """
+    
+    features = [col for col in df.columns if col not in targets]
+    
+    df = df.copy()
+    df, scaler = feature_scaling(df)  # Scale features before anomaly detection
+
+    x = df[features]      
+    clf = IsolationForest(n_estimators=100, contamination='auto', random_state=42)
+
+    df['anomaly_label'] = clf.fit_predict(x)
+    df['anomaly_score'] = clf.decision_function(x)
+
+    df[features] = scaler.inverse_transform(df[features])
+    
+    return df
+
 if __name__ == "__main__":
+
     #executing the whole pipeline with the methods just defined
     print("Starting KNN imputation process...")
 
@@ -69,6 +92,10 @@ if __name__ == "__main__":
     imputed_data = KNN_imputing(scaled_data,scaler)
     print("Missing values have been imputed.")
     
+    #performing anomaly detection on the imputed dataset
+    imputed_data = isolation_forest_anomaly_detection(imputed_data,scaler)
+    print("Anomaly detection completed.")
+
     imputed_data.to_csv(PROCESSED_DATA_PATH, index=False)
     print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
 
