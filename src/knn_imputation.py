@@ -24,7 +24,7 @@ def feature_scaling(df):
     #returning the scaler object so to then eventually perform the inverse transformation
     return scaled_df, scaler
 
-def KNN_imputation(df,scaler, n_neighbors=29):
+def KNN_imputing(df,scaler, n_neighbors=29):
     """
     Perform KNN imputation of the missing values 
     for those columns still having some
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     scaled_data, scaler = feature_scaling(data)
 
     #KNN imputation of the missing values 
-    imputed_data = KNN_imputation(scaled_data,scaler)
+    imputed_data = KNN_imputing(scaled_data,scaler)
     print("Missing values have been imputed.")
 
     final_data = imputed_data.drop_duplicates()

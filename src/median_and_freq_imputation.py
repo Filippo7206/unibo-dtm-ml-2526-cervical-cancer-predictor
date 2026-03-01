@@ -8,7 +8,7 @@ PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\da
 
 
 # Setting up the imputation strategy for the missing values in the dataset.
-def impute_missing_values(df):
+def median_freq_imputing(df):
     """
     Perform imputation of missing values for those columns still having some
     missing values after the initial cleaning steps.
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     data = pd.read_csv(BASIC_CLEANED_DATA_PATH)
     
-    data = impute_missing_values(data)
+    data = median_freq_imputing(data)
     print("Missing values have been imputed.")
 
     data = data.drop_duplicates()
