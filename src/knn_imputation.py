@@ -26,7 +26,7 @@ def feature_scaling(df):
     #returning the scaler object so to then eventually perform the inverse transformation
     return scaled_df, scaler
 
-def KNN_imputing(df,scaler, n_neighbors=29):
+def KNN_imputing(df, n_neighbors=29):
     """
     Perform KNN imputation of the missing values 
     for those columns still having some
@@ -41,47 +41,48 @@ def KNN_imputing(df,scaler, n_neighbors=29):
     features = [col for col in df.columns if col not in targets]
 
     df[features] = imputer.fit_transform(df[features])
-
-    #bringing back integer-dtype features to their original scale before rounding them to the nearest integer
-    df[features] = scaler.inverse_transform(df[features])
-
-    logged_cols = ["Number of sexual partners", "Smokes (years)", 
-                         "Smokes (packs/year)", "Hormonal Contraceptives (years)", "IUD (years)"]
-
-    #reverse the log tranformation applied earlier in the process to the specific columns
-    df[logged_cols] = np.expm1(df[logged_cols])
-
-    #separate the continuous columns from such discrete ones
-    continuous_cols = ["Smokes (years)", "Smokes (packs/year)", 
-        "Hormonal Contraceptives (years)", "IUD (years)"]
-    discrete_cols = [col for col in features if col not in continuous_cols]
-
-    #rounding the discrete features to the nearest integer
-    for col in discrete_cols: 
-        df[col] = df[col].round().astype(int)
     
     return df
 
-def isolation_forest_anomaly_detection(df,scaler):
+def isolation_forest_anomaly_detection(df):
     """
     Perform anomaly detection using Isolation Forest on the imputed dataset.
     This method identifies anomalies by isolating observations in the feature space.
     """
     
     features = [col for col in df.columns if col not in targets]
-    
-    df = df.copy()
-    df, scaler = feature_scaling(df)  # Scale features before anomaly detection
-
-    x = df[features]      
     clf = IsolationForest(n_estimators=100, contamination='auto', random_state=42)
 
-    df['anomaly_label'] = clf.fit_predict(x)
-    df['anomaly_score'] = clf.decision_function(x)
+    df['anomaly_label'] = clf.fit_predict(df[features])
+    df['anomaly_score'] = clf.decision_function(df[features])
 
-    df[features] = scaler.inverse_transform(df[features])
-    
     return df
+
+def restore_clinical_units(df, scaler):
+
+    #defining the original features to be re-scaled (excluding anomaly_label and anomaly_score)
+    original_features = list(scaler.feature_names_in_)
+
+    #reverse the scale of the features after all operations have been performed
+    df[original_features] = scaler.inverse_transform(df[original_features])
+
+    #doing the same with the previously log-transformed features, so not to distort the medical reality of the data
+    cols_to_transform = ["Number of sexual partners", "Smokes (years)", 
+                     "Smokes (packs/year)", "Hormonal Contraceptives (years)", "IUD (years)"]
+
+    df[cols_to_transform] = np.expm1(df[cols_to_transform])
+
+    #separate the continuous columns from the discrete ones
+    continuous_cols = ["Smokes (years)", "Smokes (packs/year)", 
+        "Hormonal Contraceptives (years)", "IUD (years)"]
+    discrete_cols = [col for col in original_features if col not in continuous_cols]
+
+    #rounding the discrete features to the nearest integer
+    for col in discrete_cols: 
+        df[col] = df[col].round().astype(int)
+
+    return df
+    
 
 if __name__ == "__main__":
 
@@ -94,14 +95,17 @@ if __name__ == "__main__":
     scaled_data, scaler = feature_scaling(data)
 
     #KNN imputation of the missing values 
-    imputed_data = KNN_imputing(scaled_data,scaler)
+    imputed_data = KNN_imputing(scaled_data)
     print("Missing values have been imputed.")
     
     #performing anomaly detection on the imputed dataset
-    imputed_data = isolation_forest_anomaly_detection(imputed_data,scaler)
+    analyzed_data = isolation_forest_anomaly_detection(imputed_data)
     print("Anomaly detection completed.")
 
-    imputed_data.to_csv(PROCESSED_DATA_PATH, index=False)
+    #restore the data from scaling and log transform (data un-squashing)
+    final_data = restore_clinical_units(analyzed_data, scaler)
+
+    final_data.to_csv(PROCESSED_DATA_PATH, index=False)
     print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
 
 

@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import IsolationForest
-from knn_imputation import feature_scaling, isolation_forest_anomaly_detection
+from knn_imputation import feature_scaling, isolation_forest_anomaly_detection, restore_clinical_units
 
 BASIC_CLEANED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\cleaned_data.csv'
 PROCESSED_DATA_PATH = 'C:\\unibo-dtm-ml-2526-cervical-cancer-predictor\\data\\data_after_imputation\\median_and_freq_imputed.csv'
@@ -39,16 +39,19 @@ if __name__ == "__main__":
     data = pd.read_csv(BASIC_CLEANED_DATA_PATH)
     
     #performing median and frequency imputation of the missing values
-    data = median_freq_imputing(data)
+    imputed_data = median_freq_imputing(data)
     print("Missing values have been imputed.")
 
     #scaling data before performing anomaly detection
-    data, scaler = feature_scaling(data)  
+    scaled_imputed_data, scaler = feature_scaling(imputed_data)  
 
     #performing anomaly detection on the imputed dataset
-    data = isolation_forest_anomaly_detection(data,scaler)
+    analyzed_data = isolation_forest_anomaly_detection(scaled_imputed_data)
     print("Anomaly detection completed.")
 
-    data.to_csv(PROCESSED_DATA_PATH, index=False)
+    #restore the data from scaling and log transform (data un-squashing)
+    final_data = restore_clinical_units(analyzed_data, scaler)
+
+    final_data.to_csv(PROCESSED_DATA_PATH, index=False)
     print(f"Cleaned data saved to {PROCESSED_DATA_PATH}")
 
