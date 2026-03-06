@@ -45,9 +45,14 @@ def KNN_imputing(df,scaler, n_neighbors=29):
     #bringing back integer-dtype features to their original scale before rounding them to the nearest integer
     df[features] = scaler.inverse_transform(df[features])
 
-    #before rounding the scaled integer values, we need to separate the continuous columns from such discrete ones
-    #especially after log1p transformation, some of the features that were originally discrete may now contain decimal values
-    continuous_cols = ["Number of sexual partners", "Smokes (years)", "Smokes (packs/year)", 
+    logged_cols = ["Number of sexual partners", "Smokes (years)", 
+                         "Smokes (packs/year)", "Hormonal Contraceptives (years)", "IUD (years)"]
+
+    #reverse the log tranformation applied earlier in the process to the specific columns
+    df[logged_cols] = np.expm1(df[logged_cols])
+
+    #separate the continuous columns from such discrete ones
+    continuous_cols = ["Smokes (years)", "Smokes (packs/year)", 
         "Hormonal Contraceptives (years)", "IUD (years)"]
     discrete_cols = [col for col in features if col not in continuous_cols]
 
