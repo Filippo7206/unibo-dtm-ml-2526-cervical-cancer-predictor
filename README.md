@@ -23,6 +23,7 @@ This project utilizes a custom, mathematically rigorous preprocessing and modeli
 - Robust Cross-Validation: Utilization of a custom multi-label stratifier (src/utils/ml_stratifiers.py) to ensure fair minority class distribution across all training folds.
 
 ## Repository Structure
+```text
 ├── assets/                            # Plots, countplots, and correlation matrices
 ├── data/
 │   ├── raw.csv                        # Original unprocessed dataset
@@ -48,6 +49,7 @@ This project utilizes a custom, mathematically rigorous preprocessing and modeli
 ├── LICENSE
 ├── README.md                          
 └── requirements.txt                   # Project dependencies
+```
 
 ## Results 
 The primary clinical objective was to achieve a Biopsy Precision > 0.20 while maintaining a safe Recall > 0.60 to minimize false negatives in cancer detection.
