@@ -46,9 +46,6 @@ def zero_variance_drop(df):
     return df
 
 def corr_based_drop(df):
-    """
-    Drop features based on high correlation, as identified in EDA.
-    """
 
     #dropping features with high correlation (corr >0.80) with other features, as identified in EDA
     high_corr_cols = ["STDs", "STDs:vulvo-perineal condylomatosis", "STDs: Number of diagnosis", "Dx:HPV"]
